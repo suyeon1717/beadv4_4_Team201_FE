@@ -1,0 +1,62 @@
+/**
+ * TanStack Query key factory for consistent cache management
+ *
+ * Usage:
+ * - useQuery({ queryKey: queryKeys.funding('123'), ... })
+ * - queryClient.invalidateQueries({ queryKey: queryKeys.cart })
+ */
+export const queryKeys = {
+  // Home
+  home: ['home'] as const,
+
+  // Fundings
+  fundings: ['fundings'] as const,
+  funding: (id: string) => ['fundings', id] as const,
+  myOrganizedFundings: ['fundings', 'organized'] as const,
+  myParticipatedFundings: ['fundings', 'participated'] as const,
+  myReceivedFundings: ['fundings', 'received'] as const,
+
+  // Cart
+  cart: ['cart'] as const,
+
+  // Wallet
+  wallet: ['wallet'] as const,
+  walletHistory: (params?: { type?: string }) => ['wallet', 'history', params] as const,
+
+  // Wishlist
+  myWishlist: ['wishlists', 'me'] as const,
+  wishlist: (memberId: string) => ['wishlists', memberId] as const,
+
+  // Products
+  products: (params?: { search?: string; category?: string; minPrice?: number; maxPrice?: number }) =>
+    ['products', params] as const,
+  product: (id: string) => ['products', id] as const,
+
+  // Members
+  member: (id: string) => ['members', id] as const,
+  memberFriends: (id: string) => ['members', id, 'friends'] as const,
+
+  // Orders
+  orders: ['orders'] as const,
+  order: (id: string) => ['orders', id] as const,
+
+  // Auth
+  me: ['auth', 'me'] as const,
+} as const;
+
+/**
+ * Cache Invalidation Rules Reference:
+ *
+ * | Mutation                | Invalidate Keys                                    |
+ * |-------------------------|---------------------------------------------------|
+ * | Add to cart             | cart, funding(id)                                 |
+ * | Remove from cart        | cart                                              |
+ * | Update cart item        | cart                                              |
+ * | Create funding          | myWishlist, myOrganizedFundings, home             |
+ * | Participate in funding  | funding(id), cart                                 |
+ * | Accept/Refuse funding   | funding(id), myReceivedFundings                   |
+ * | Charge wallet           | wallet, walletHistory                             |
+ * | Pay order               | wallet, walletHistory, cart, affected funding(id)s|
+ * | Add wishlist item       | myWishlist                                        |
+ * | Delete wishlist item    | myWishlist                                        |
+ */
