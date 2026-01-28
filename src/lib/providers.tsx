@@ -5,6 +5,14 @@ import { Auth0Provider } from '@auth0/nextjs-auth0/client';
 import { Toaster } from 'sonner';
 import { useState } from 'react';
 
+/**
+ * Application Providers
+ *
+ * Wraps the application with necessary providers:
+ * - Auth0Provider: Auth0 authentication context
+ * - QueryClientProvider: TanStack Query for data fetching
+ * - Toaster: Notification system
+ */
 export function Providers({ children }: { children: React.ReactNode }) {
     const [queryClient] = useState(
         () =>
@@ -14,6 +22,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
                         // With Next.js 14, by default, we want to avoid refetching immediately on the client
                         // unless explicit. Adjust staleTime as needed.
                         staleTime: 60 * 1000,
+                        retry: 1,
                     },
                 },
             })

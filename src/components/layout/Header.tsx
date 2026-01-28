@@ -15,6 +15,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { LoginButton } from '@/features/auth/components/LoginButton';
+import { UserMenu } from '@/features/auth/components/UserMenu';
 
 export type HeaderVariant = 'main' | 'detail' | 'search';
 
@@ -113,28 +116,7 @@ export function Header({
 
             case 'main':
             default:
-                return (
-                    <div className="flex w-full items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="icon" aria-label="Menu">
-                                <Menu className="h-6 w-6" />
-                            </Button>
-                            <Link href="/" className="text-xl font-bold text-primary">
-                                Giftify
-                            </Link>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="icon" aria-label="Notifications">
-                                <Bell className="h-6 w-6" />
-                            </Button>
-                            <Link href="/profile">
-                                <Button variant="ghost" size="icon" aria-label="Profile">
-                                    <User className="h-6 w-6" />
-                                </Button>
-                            </Link>
-                        </div>
-                    </div>
-                );
+                return <MainHeaderContent />;
         }
     };
 
@@ -147,5 +129,39 @@ export function Header({
         >
             {renderContent()}
         </header>
+    );
+}
+
+/**
+ * Main Header Content with Auth Integration
+ */
+function MainHeaderContent() {
+    const { user, isLoading } = useAuth();
+
+    return (
+        <div className="flex w-full items-center justify-between">
+            <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" aria-label="Menu">
+                    <Menu className="h-6 w-6" />
+                </Button>
+                <Link href="/" className="text-xl font-bold text-primary">
+                    Giftify
+                </Link>
+            </div>
+            <div className="flex items-center gap-2">
+                {user && (
+                    <Button variant="ghost" size="icon" aria-label="Notifications">
+                        <Bell className="h-6 w-6" />
+                    </Button>
+                )}
+                {isLoading ? (
+                    <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+                ) : user ? (
+                    <UserMenu />
+                ) : (
+                    <LoginButton />
+                )}
+            </div>
+        </div>
     );
 }
