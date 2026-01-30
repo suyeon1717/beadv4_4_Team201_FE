@@ -3,17 +3,22 @@
 import { useEffect, useState } from 'react';
 
 export function MSWProvider({ children }: { children: React.ReactNode }) {
+  const shouldEnableMSW = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_API_MOCKING === 'enabled';
+
   const [mswReady, setMswReady] = useState(
-    () => process.env.NODE_ENV !== 'development'
+    () => !shouldEnableMSW
   );
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
+    if (shouldEnableMSW) {
       const initMSW = async () => {
         try {
           const { worker } = await import('@/mocks/browser');
           await worker.start({
             onUnhandledRequest: 'bypass',
+            serviceWorker: {
+              url: '/mockServiceWorker.js',
+            },
           });
           setMswReady(true);
         } catch (error) {
