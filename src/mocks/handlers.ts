@@ -61,7 +61,7 @@ export const handlers = [
       isNewUser,
     });
   }),
-  http.post('***/api/v2/auth/login', () => {
+  http.post('**/api/v2/auth/login', () => {
     const isNewUser = !currentUser.nickname || currentUser.email.includes('new');
     return HttpResponse.json({
       isNewUser,
@@ -71,22 +71,22 @@ export const handlers = [
     });
   }),
 
-  http.post('***/api/v2/auth/logout', () => {
+  http.post('**/api/v2/auth/logout', () => {
     return new HttpResponse(null, { status: 204 });
   }),
 
-  http.get('***/api/v2/auth/me', () => {
+  http.get('**/api/v2/auth/me', () => {
     return HttpResponse.json(currentUser);
   }),
 
   // ============================================
   // MEMBERS
   // ============================================
-  http.get('***/api/v2/members/me', () => {
+  http.get('**/api/v2/members/me', () => {
     return HttpResponse.json(currentUser);
   }),
 
-  http.get('***/api/v2/members/:memberId', ({ params }) => {
+  http.get('**/api/v2/members/:memberId', ({ params }) => {
     const { memberId } = params;
     const member = members.find((m) => m.id === memberId);
     if (!member) {
@@ -100,7 +100,7 @@ export const handlers = [
     return HttpResponse.json(publicMember);
   }),
 
-  http.patch('***/api/v2/members/:memberId', async ({ params, request }) => {
+  http.patch('**/api/v2/members/:memberId', async ({ params, request }) => {
     const { memberId } = params;
     const body = await request.json();
 
@@ -122,7 +122,7 @@ export const handlers = [
     });
   }),
 
-  http.get('***/api/v2/members/:memberId/friends', ({ request }) => {
+  http.get('**/api/v2/members/:memberId/friends', ({ request }) => {
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') || '0');
     const size = parseInt(url.searchParams.get('size') || '20');
@@ -147,11 +147,11 @@ export const handlers = [
   // ============================================
   // WISHLISTS
   // ============================================
-  http.get('***/api/v2/wishlists/me', () => {
+  http.get('**/api/v2/wishlists/me', () => {
     return HttpResponse.json(myWishlist);
   }),
 
-  http.get('***/api/v2/wishlists/:memberId', ({ params }) => {
+  http.get('**/api/v2/wishlists/:memberId', ({ params }) => {
     const { memberId } = params;
     const wishlist = wishlists.find((w) => w.memberId === memberId);
     if (!wishlist) {
@@ -160,7 +160,7 @@ export const handlers = [
     return HttpResponse.json(wishlist);
   }),
 
-  http.patch('***/api/v2/wishlists/visibility', async ({ request }) => {
+  http.patch('**/api/v2/wishlists/visibility', async ({ request }) => {
     const body = await request.json();
     const updatedWishlist = {
       ...myWishlist,
@@ -169,7 +169,7 @@ export const handlers = [
     return HttpResponse.json(updatedWishlist);
   }),
 
-  http.post('***/api/v2/wishlists/items', async ({ request }) => {
+  http.post('**/api/v2/wishlists/items', async ({ request }) => {
     const body = await request.json();
     const { productId } = body as { productId: string };
     const product = products.find((p) => p.id === productId);
@@ -188,11 +188,11 @@ export const handlers = [
     return HttpResponse.json(newItem, { status: 201 });
   }),
 
-  http.delete('***/api/v2/wishlists/items/:itemId', () => {
+  http.delete('**/api/v2/wishlists/items/:itemId', () => {
     return new HttpResponse(null, { status: 204 });
   }),
 
-  http.get('***/api/v2/friends/wishlists', ({ request }) => {
+  http.get('**/api/v2/friends/wishlists', ({ request }) => {
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get('limit') || '5');
 
@@ -208,7 +208,7 @@ export const handlers = [
   // ============================================
   // PRODUCTS
   // ============================================
-  http.get('***/api/v2/products', ({ request }) => {
+  http.get('**/api/v2/products', ({ request }) => {
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') || '0');
     const size = parseInt(url.searchParams.get('size') || '20');
@@ -230,7 +230,7 @@ export const handlers = [
     });
   }),
 
-  http.get('***/api/v2/products/search', ({ request }) => {
+  http.get('**/api/v2/products/search', ({ request }) => {
     const url = new URL(request.url);
     const q = url.searchParams.get('q') || '';
     const page = parseInt(url.searchParams.get('page') || '0');
@@ -257,13 +257,13 @@ export const handlers = [
     });
   }),
 
-  http.get('***/api/v2/products/popular', ({ request }) => {
+  http.get('**/api/v2/products/popular', ({ request }) => {
     const url = new URL(request.url);
     const limit = parseInt(url.searchParams.get('limit') || '8');
     return HttpResponse.json({ items: popularProducts.slice(0, limit) });
   }),
 
-  http.get('***/api/v2/products/:productId', ({ params }) => {
+  http.get('**/api/v2/products/:productId', ({ params }) => {
     const { productId } = params;
     const detail = productDetails[productId as string];
     if (!detail) {
@@ -275,7 +275,7 @@ export const handlers = [
   // ============================================
   // FUNDINGS
   // ============================================
-  http.get('***/api/v2/fundings', ({ request }) => {
+  http.get('**/api/v2/fundings', ({ request }) => {
     const url = new URL(request.url);
     const status = url.searchParams.get('status');
     const page = parseInt(url.searchParams.get('page') || '0');
@@ -303,7 +303,7 @@ export const handlers = [
     });
   }),
 
-  http.post('***/api/v2/fundings', async ({ request }) => {
+  http.post('**/api/v2/fundings', async ({ request }) => {
     const body = await request.json();
     const { wishItemId } = body as { wishItemId: string };
 
@@ -336,7 +336,7 @@ export const handlers = [
     return HttpResponse.json(newFunding, { status: 201 });
   }),
 
-  http.get('***/api/v2/fundings/:fundingId', ({ params }) => {
+  http.get('**/api/v2/fundings/:fundingId', ({ params }) => {
     const { fundingId } = params;
     const funding = fundings.find((f) => f.id === fundingId);
     if (!funding) {
@@ -355,7 +355,7 @@ export const handlers = [
     });
   }),
 
-  http.post('***/api/v2/fundings/:fundingId/accept', ({ params }) => {
+  http.post('**/api/v2/fundings/:fundingId/accept', ({ params }) => {
     const { fundingId } = params;
     const funding = fundings.find((f) => f.id === fundingId);
     if (!funding) {
@@ -365,7 +365,7 @@ export const handlers = [
     return HttpResponse.json(updatedFunding);
   }),
 
-  http.post('***/api/v2/fundings/:fundingId/refuse', ({ params }) => {
+  http.post('**/api/v2/fundings/:fundingId/refuse', ({ params }) => {
     const { fundingId } = params;
     const funding = fundings.find((f) => f.id === fundingId);
     if (!funding) {
@@ -375,7 +375,7 @@ export const handlers = [
     return HttpResponse.json(updatedFunding);
   }),
 
-  http.get('***/api/v2/fundings/:fundingId/participants', ({ request, params }) => {
+  http.get('**/api/v2/fundings/:fundingId/participants', ({ request, params }) => {
     const { fundingId } = params;
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') || '0');
@@ -399,7 +399,7 @@ export const handlers = [
     });
   }),
 
-  http.get('***/api/v2/fundings/my/organized', ({ request }) => {
+  http.get('**/api/v2/fundings/my/organized', ({ request }) => {
     const url = new URL(request.url);
     const status = url.searchParams.get('status');
     const page = parseInt(url.searchParams.get('page') || '0');
@@ -427,7 +427,7 @@ export const handlers = [
     });
   }),
 
-  http.get('***/api/v2/fundings/my/participated', ({ request }) => {
+  http.get('**/api/v2/fundings/my/participated', ({ request }) => {
     const url = new URL(request.url);
     const status = url.searchParams.get('status');
     const page = parseInt(url.searchParams.get('page') || '0');
@@ -455,7 +455,7 @@ export const handlers = [
     });
   }),
 
-  http.get('***/api/v2/fundings/my/received', ({ request }) => {
+  http.get('**/api/v2/fundings/my/received', ({ request }) => {
     const url = new URL(request.url);
     const status = url.searchParams.get('status');
     const page = parseInt(url.searchParams.get('page') || '0');
@@ -486,7 +486,7 @@ export const handlers = [
   // ============================================
   // CART
   // ============================================
-  http.get('***/api/v2/cart', () => {
+  http.get('**/api/v2/cart', () => {
     const selectedCount = cartItems.filter((item) => item.selected).length;
     const totalAmount = cartItems
       .filter((item) => item.selected)
@@ -501,7 +501,7 @@ export const handlers = [
     });
   }),
 
-  http.post('***/api/v2/cart/items', async ({ request }) => {
+  http.post('**/api/v2/cart/items', async ({ request }) => {
     const body = await request.json();
     const { fundingId, wishItemId, amount } = body as {
       fundingId?: string;
@@ -563,7 +563,7 @@ export const handlers = [
     return HttpResponse.json(newCartItem, { status: 201 });
   }),
 
-  http.patch('***/api/v2/cart/items/:itemId', async ({ params, request }) => {
+  http.patch('**/api/v2/cart/items/:itemId', async ({ params, request }) => {
     const { itemId } = params;
     const body = await request.json();
     const { amount, selected } = body as {
@@ -582,13 +582,13 @@ export const handlers = [
     return HttpResponse.json(item);
   }),
 
-  http.delete('***/api/v2/cart/items/:itemId', ({ params }) => {
+  http.delete('**/api/v2/cart/items/:itemId', ({ params }) => {
     const { itemId } = params;
     cartItems = cartItems.filter((i) => i.id !== itemId);
     return new HttpResponse(null, { status: 204 });
   }),
 
-  http.delete('***/api/v2/cart/clear', () => {
+  http.delete('**/api/v2/cart/clear', () => {
     cartItems = [];
     return new HttpResponse(null, { status: 204 });
   }),
@@ -596,7 +596,7 @@ export const handlers = [
   // ============================================
   // WALLET
   // ============================================
-  http.get('***/api/v2/wallet', () => {
+  http.get('**/api/v2/wallet', () => {
     return HttpResponse.json({
       id: 'wallet-1',
       memberId: currentUser.id,
@@ -604,7 +604,7 @@ export const handlers = [
     });
   }),
 
-  http.post('***/api/v2/wallet/charge', async ({ request }) => {
+  http.post('**/api/v2/wallet/charge', async ({ request }) => {
     const body = await request.json();
     const { amount } = body as { amount: number };
 
@@ -615,7 +615,7 @@ export const handlers = [
     });
   }),
 
-  http.get('***/api/v2/wallet/history', ({ request }) => {
+  http.get('**/api/v2/wallet/history', ({ request }) => {
     const url = new URL(request.url);
     const page = parseInt(url.searchParams.get('page') || '0');
     const size = parseInt(url.searchParams.get('size') || '20');
@@ -652,7 +652,7 @@ export const handlers = [
   // ============================================
   // HOME
   // ============================================
-  http.get('***/api/v2/home', () => {
+  http.get('**/api/v2/home', () => {
     const friendWishlistsData = friendsWishlists.slice(0, 5).map((w) => ({
       member: w.member,
       wishlist: w,
