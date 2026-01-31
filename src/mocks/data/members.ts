@@ -6,6 +6,9 @@ export interface Member {
   avatarUrl: string | null;
   role: 'USER' | 'SELLER';
   status: 'ACTIVE' | 'SUSPENDED' | 'WITHDRAWN';
+  birthday?: string;
+  address?: string;
+  phoneNum?: string;
   createdAt: string;
 }
 
@@ -16,14 +19,14 @@ export interface MemberPublic {
 }
 
 export const currentUser: Member = {
-  id: 'member-1',
-  authSub: 'auth0|123456',
+  id: 'member-dev',
+  authSub: 'auth0|dev-user-123',
   nickname: null,
-  email: 'changu@example.com',
-  avatarUrl: 'https://i.pravatar.cc/150?u=member1',
+  email: 'developer@giftify.app',
+  avatarUrl: null,
   role: 'USER',
   status: 'ACTIVE',
-  createdAt: '2024-01-01T00:00:00Z',
+  createdAt: new Date().toISOString(),
 };
 
 export const members: Member[] = [

@@ -6,16 +6,21 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import type { MemberUpdateRequest } from '@/types/member';
 import { toast } from 'sonner';
 
+import { usePathname } from 'next/navigation';
+
 /**
  * Hook to fetch the current user's profile
  */
 export function useProfile() {
   const { user } = useAuth();
+  const pathname = usePathname();
+  const isCompleteSignup = pathname === '/auth/complete-signup';
 
   return useQuery({
     queryKey: queryKeys.me,
     queryFn: getMe,
-    enabled: !!user,
+    enabled: !!user && !isCompleteSignup,
+    retry: false, // Don't retry if it fails for new users
   });
 }
 
