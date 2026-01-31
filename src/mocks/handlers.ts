@@ -53,27 +53,29 @@ export const handlers = [
   // AUTH (BFF & Backend)
   // ============================================
   // Mock the BFF sync route
-  http.post('*/api/auth/sync', () => {
-    // Dynamically check if new user
-    const isNewUser = !currentUser.nickname;
+  http.post('*/api/auth/sync', ({ request }) => {
+    // Dynamically check if new user (for testing: email containing 'new')
+    const isNewUser = !currentUser.nickname || currentUser.email.includes('new');
     return HttpResponse.json({
-      member: currentUser,
+      member: currentUser.nickname ? currentUser : null,
       isNewUser,
     });
   }),
-  http.post(`${API_BASE}/api/auth/login`, () => {
-    const isNewUser = !currentUser.nickname;
+  http.post(`${API_BASE}/api/v2/auth/login`, () => {
+    const isNewUser = !currentUser.nickname || currentUser.email.includes('new');
     return HttpResponse.json({
-      member: currentUser,
       isNewUser,
+      authSub: currentUser.authSub,
+      email: currentUser.email,
+      member: isNewUser ? null : currentUser,
     });
   }),
 
-  http.post(`${API_BASE}/api/auth/logout`, () => {
+  http.post(`${API_BASE}/api/v2/auth/logout`, () => {
     return new HttpResponse(null, { status: 204 });
   }),
 
-  http.get(`${API_BASE}/api/auth/me`, () => {
+  http.get(`${API_BASE}/api/v2/auth/me`, () => {
     return HttpResponse.json(currentUser);
   }),
 

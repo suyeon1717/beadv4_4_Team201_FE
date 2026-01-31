@@ -21,18 +21,18 @@ export function AuthInitializer() {
 
             try {
                 hasSynced.current = true;
-                const { isNewUser } = await sync();
+                console.log('[AuthInitializer] Syncing user session...');
+                const result = await sync();
+                console.log('[AuthInitializer] Sync result:', result);
 
                 // Redirect to complete signup if it is a new user
-                if (isNewUser) {
+                if (result.isNewUser) {
+                    console.log('[AuthInitializer] New user detected, redirecting to /auth/complete-signup');
                     router.push('/auth/complete-signup');
                 }
             } catch (error) {
-                console.error('Failed to sync user:', error);
-                // If sync fails, it might mean the backend is down or token is invalid.
-                // We could force logout or show an error.
-                // For now, just log it.
-                // potentially: toast.error('Failed to synchronize login session.');
+                console.error('[AuthInitializer] Failed to sync user:', error);
+                hasSynced.current = false; // Allow retry on next run if it failed
             }
         }
 
