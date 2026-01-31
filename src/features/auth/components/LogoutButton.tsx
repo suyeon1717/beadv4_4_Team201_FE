@@ -16,6 +16,9 @@ interface LogoutButtonProps {
 
 export function LogoutButton({ variant = 'ghost', size = 'sm', className }: LogoutButtonProps) {
   const handleLogout = () => {
+    // Clear auth sync state and local state
+    sessionStorage.clear();
+    localStorage.clear();
     window.location.href = '/auth/logout';
   };
 

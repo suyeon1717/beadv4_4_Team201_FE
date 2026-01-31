@@ -25,22 +25,27 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ p
 
 async function proxyRequest(req: NextRequest, path: string[], method: string) {
   try {
-    // Auth0 v4: use getAccessToken() method to get access token
-    const tokenResult = await auth0.getAccessToken();
+    let accessToken: string | undefined;
 
-    if (!tokenResult?.token) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    try {
+      // Auth0 v4: use getAccessToken() method to get access token
+      const tokenResult = await auth0.getAccessToken();
+      accessToken = tokenResult?.token;
+    } catch (e) {
+      // If no session exists or error getting token, proceed without it
+      console.log('[Proxy] Proceeding without access token');
     }
-
-    const accessToken = tokenResult.token;
 
     const pathString = path.join('/');
     const url = `${API_URL}/${pathString}${req.nextUrl.search}`;
 
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
     };
+
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
 
     const body = ['GET', 'HEAD'].includes(method) ? undefined : await req.text();
 

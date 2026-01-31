@@ -10,6 +10,9 @@ import { toast } from 'sonner';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import DaumPostcode from 'react-daum-postcode';
 
+import { AppShell } from '@/components/layout/AppShell';
+import { LogoutButton } from '@/features/auth/components/LogoutButton';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
@@ -202,129 +205,144 @@ export default function CompleteSignupPage() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-background p-4 my-8">
-            <Card className="w-full max-w-md">
-                <CardHeader>
-                    <CardTitle className="text-2xl text-center">회원가입 마무리</CardTitle>
-                    <CardDescription className="text-center mb-4">
-                        서비스 이용을 위해 추가 정보를 입력해주세요.<br />
-                        모든 정보는 선택사항입니다.
-                    </CardDescription>
-                    <div className="space-y-2">
-                        <Progress value={progress} className="h-2" />
-                        <p className="text-xs text-right text-muted-foreground">
-                            {Math.round(progress)}% 완료
-                        </p>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                            <FormField
-                                control={form.control}
-                                name="nickname"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>닉네임</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={`${placeholderNickname} (선택)`} {...field} />
-                                        </FormControl>
-                                        <FormDescription>
-                                            입력하지 않으면 <strong>{placeholderNickname}</strong>(으)로 자동 생성됩니다.
-                                        </FormDescription>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+        <AppShell
+            headerVariant="detail"
+            headerTitle="회원가입 마무리"
+            showBottomNav={true}
+        >
+            <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center bg-background p-4 pb-20">
+                <Card className="w-full max-w-md">
+                    <CardHeader>
+                        <CardTitle className="text-2xl text-center">회원가입 마무리</CardTitle>
+                        <CardDescription className="text-center mb-4">
+                            서비스 이용을 위해 추가 정보를 입력해주세요.<br />
+                            모든 정보는 선택사항입니다.
+                        </CardDescription>
+                        <div className="space-y-2">
+                            <Progress value={progress} className="h-2" />
+                            <p className="text-xs text-right text-muted-foreground">
+                                {Math.round(progress)}% 완료
+                            </p>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                <FormField
+                                    control={form.control}
+                                    name="nickname"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>닉네임</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder={`${placeholderNickname} (선택)`} {...field} />
+                                            </FormControl>
+                                            <FormDescription>
+                                                입력하지 않으면 <strong>{placeholderNickname}</strong>(으)로 자동 생성됩니다.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <FormField
-                                control={form.control}
-                                name="phoneNum"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>휴대전화번호</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="010-1234-5678 (선택)" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                <FormField
+                                    control={form.control}
+                                    name="phoneNum"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>휴대전화번호</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="010-1234-5678 (선택)" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <FormField
-                                control={form.control}
-                                name="birthday"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>생년월일</FormLabel>
-                                        <FormControl>
-                                            <Input type="date" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                <FormField
+                                    control={form.control}
+                                    name="birthday"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>생년월일</FormLabel>
+                                            <FormControl>
+                                                <Input type="date" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <FormField
-                                control={form.control}
-                                name="address"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>주소</FormLabel>
-                                        <div className="flex flex-col gap-2">
-                                            <div className="flex gap-2">
-                                                <FormControl>
-                                                    <Input placeholder="주소를 검색하세요 (선택)" {...field} readOnly />
-                                                </FormControl>
-                                                <Dialog open={isAddressModalOpen} onOpenChange={setIsAddressModalOpen}>
-                                                    <DialogTrigger asChild>
-                                                        <Button type="button" variant="outline" size="icon">
-                                                            <Search className="h-4 w-4" />
-                                                        </Button>
-                                                    </DialogTrigger>
-                                                    <DialogContent className="sm:max-w-md">
-                                                        <DialogHeader>
-                                                            <DialogTitle>주소 검색</DialogTitle>
-                                                        </DialogHeader>
-                                                        <div className="mt-4 border rounded-md overflow-hidden">
-                                                            <DaumPostcode
-                                                                onComplete={handleAddressComplete}
-                                                                style={{ height: '400px', width: '100%' }}
-                                                            />
-                                                        </div>
-                                                    </DialogContent>
-                                                </Dialog>
+                                <FormField
+                                    control={form.control}
+                                    name="address"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>주소</FormLabel>
+                                            <div className="flex flex-col gap-2">
+                                                <div className="flex gap-2">
+                                                    <FormControl>
+                                                        <Input placeholder="주소를 검색하세요 (선택)" {...field} readOnly />
+                                                    </FormControl>
+                                                    <Dialog open={isAddressModalOpen} onOpenChange={setIsAddressModalOpen}>
+                                                        <DialogTrigger asChild>
+                                                            <Button type="button" variant="outline" size="icon">
+                                                                <Search className="h-4 w-4" />
+                                                            </Button>
+                                                        </DialogTrigger>
+                                                        <DialogContent className="sm:max-w-md">
+                                                            <DialogHeader>
+                                                                <DialogTitle>주소 검색</DialogTitle>
+                                                            </DialogHeader>
+                                                            <div className="mt-4 border rounded-md overflow-hidden">
+                                                                <DaumPostcode
+                                                                    onComplete={handleAddressComplete}
+                                                                    style={{ height: '400px', width: '100%' }}
+                                                                />
+                                                            </div>
+                                                        </DialogContent>
+                                                    </Dialog>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <FormField
-                                control={form.control}
-                                name="detailAddress"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormControl>
-                                            <Input placeholder="상세 주소를 입력하세요 (선택)" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                <FormField
+                                    control={form.control}
+                                    name="detailAddress"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormControl>
+                                                <Input placeholder="상세 주소를 입력하세요 (선택)" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <Button
-                                type="submit"
-                                className={`w-full transition-colors duration-300 ${getButtonColorClass()}`}
-                                disabled={updateMutation.isPending}
-                            >
-                                {getButtonText()}
-                            </Button>
-                        </form>
-                    </Form>
-                </CardContent>
-            </Card>
-        </div>
+                                <div className="space-y-3">
+                                    <Button
+                                        type="submit"
+                                        className={`w-full transition-colors duration-300 ${getButtonColorClass()}`}
+                                        disabled={updateMutation.isPending}
+                                    >
+                                        {getButtonText()}
+                                    </Button>
+
+                                    <div className="flex justify-center">
+                                        <LogoutButton
+                                            variant="ghost"
+                                            className="text-muted-foreground hover:text-destructive"
+                                        />
+                                    </div>
+                                </div>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </Card>
+            </div>
+        </AppShell>
     );
 }
