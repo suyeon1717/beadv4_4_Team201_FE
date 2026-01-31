@@ -49,7 +49,31 @@ interface CartItem {
 let cartItems: CartItem[] = [];
 
 export const handlers = [
-  // Removed AUTH and MEMBERS mocks to let real backend handle the signup/login flow
+  // auth/login, logout, me and member signup/me should always hit the backend
+  http.all('**/api/v2/auth/**', () => passthrough()),
+  http.all('**/api/v2/members/**', () => passthrough()),
+  http.all('**/api/v2/wallet/**', () => passthrough()),
+  http.all('**/api/v2/payments/**', () => passthrough()),
+  http.all('**/api/auth/**', () => passthrough()),
+
+  // ============================================
+  // HOME
+  // ============================================
+  http.get('**/api/v2/home', () => {
+    const friendWishlistsData = friendsWishlists.slice(0, 5).map((w) => ({
+      member: w.member,
+      wishlist: w,
+      previewItems: w.items.slice(0, 3),
+    }));
+
+    return HttpResponse.json({
+      member: currentUser,
+      myFundings: myParticipatedFundings.slice(0, 10),
+      friendsWishlists: friendWishlistsData,
+      popularProducts: popularProducts.slice(0, 8),
+      walletBalance,
+    });
+  }),
 
   // ============================================
   // WISHLISTS
@@ -500,61 +524,4 @@ export const handlers = [
     return new HttpResponse(null, { status: 204 });
   }),
 
-  // ============================================
-  // WALLET
-  // ============================================
-  http.get('**/api/v2/wallet', () => {
-    return HttpResponse.json({
-      id: 'wallet-1',
-      memberId: currentUser.id,
-      balance: walletBalance,
-    });
-  }),
-
-  http.post('**/api/v2/wallet/charge', async ({ request }) => {
-    const body = await request.json();
-    const { amount } = body as { amount: number };
-
-    return HttpResponse.json({
-      chargeId: `charge-${Date.now()}`,
-      paymentUrl: 'https://mock-payment-url.com',
-      amount,
-    });
-  }),
-
-  http.get('**/api/v2/wallet/history', ({ request }) => {
-    const url = new URL(request.url);
-    const page = parseInt(url.searchParams.get('page') || '0');
-    const size = parseInt(url.searchParams.get('size') || '20');
-
-    const mockHistory = [
-      {
-        id: 'tx-1',
-        type: 'CHARGE',
-        amount: 1000000,
-        balanceAfter: walletBalance,
-        description: '지갑 충전',
-        relatedId: null,
-        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-      },
-    ];
-
-    const start = page * size;
-    const end = start + size;
-    const paginated = mockHistory.slice(start, end);
-
-    return HttpResponse.json({
-      items: paginated,
-      page: {
-        page,
-        size,
-        totalElements: mockHistory.length,
-        totalPages: Math.ceil(mockHistory.length / size),
-        hasNext: end < mockHistory.length,
-        hasPrevious: page > 0,
-      },
-    });
-  }),
-
-  // Removed HOME mock as it depends on real member data
 ];
