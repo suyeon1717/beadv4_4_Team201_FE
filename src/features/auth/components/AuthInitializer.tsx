@@ -21,7 +21,11 @@ export function AuthInitializer() {
             if (hasSynced.current) return;
 
             // Skip sync if we are already on the complete-signup page
-            if (pathname === '/auth/complete-signup') return;
+            if (pathname === '/auth/complete-signup') {
+                sessionStorage.setItem(SYNC_SESSION_KEY, 'true');
+                hasSynced.current = true;
+                return;
+            }
 
             // Check sessionStorage first (persists across page navigations)
             if (sessionStorage.getItem(SYNC_SESSION_KEY)) {

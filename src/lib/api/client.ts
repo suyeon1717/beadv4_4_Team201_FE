@@ -1,6 +1,7 @@
 import { toast } from 'sonner';
 
-const BASE_URL = '/api/proxy';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+const BASE_URL = typeof window === 'undefined' ? API_URL : '/api/proxy';
 
 export class ApiError extends Error {
     code: string;

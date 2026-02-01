@@ -34,6 +34,7 @@ import {
 } from '@/components/ui/dialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { signupMember } from '@/lib/api/members';
+import { queryKeys } from '@/lib/query/keys';
 import { Search } from 'lucide-react';
 
 const formSchema = z.object({
@@ -124,7 +125,8 @@ export default function CompleteSignupPage() {
             });
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['me'] });
+            queryClient.invalidateQueries({ queryKey: queryKeys.me });
+            queryClient.invalidateQueries({ queryKey: queryKeys.home });
             toast.success('프로필 설정이 완료되었습니다!');
             router.push('/');
         },
@@ -133,7 +135,8 @@ export default function CompleteSignupPage() {
             // Treat this as success and redirect to home
             if (error?.status === 409 || error?.message?.includes('409')) {
                 console.log('Member already exists, redirecting to home');
-                queryClient.invalidateQueries({ queryKey: ['me'] });
+                queryClient.invalidateQueries({ queryKey: queryKeys.me });
+                queryClient.invalidateQueries({ queryKey: queryKeys.home });
                 toast.success('프로필 설정이 완료되었습니다!');
                 router.push('/');
                 return;
