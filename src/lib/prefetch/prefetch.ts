@@ -13,17 +13,17 @@ export async function prefetchUserData(queryClient: QueryClient) {
     await Promise.all([
         queryClient.prefetchQuery({
             queryKey: queryKeys.wallet,
-            queryFn: getWallet,
+            queryFn: () => getWallet(),
             staleTime: 60 * 1000,
         }),
         queryClient.prefetchQuery({
             queryKey: queryKeys.cart,
-            queryFn: getCart,
+            queryFn: () => getCart(),
             staleTime: 60 * 1000,
         }),
         queryClient.prefetchQuery({
             queryKey: queryKeys.myWishlist,
-            queryFn: getMyWishlist,
+            queryFn: () => getMyWishlist(),
             staleTime: 60 * 1000,
         }),
     ]);
@@ -35,7 +35,7 @@ export async function prefetchUserData(queryClient: QueryClient) {
 export async function prefetchHomeData(queryClient: QueryClient) {
     await queryClient.prefetchQuery({
         queryKey: queryKeys.home,
-        queryFn: getHomeData,
+        queryFn: () => getHomeData(),
         staleTime: 30 * 1000,
     });
 }
