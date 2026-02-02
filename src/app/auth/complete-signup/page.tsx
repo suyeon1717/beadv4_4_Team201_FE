@@ -241,7 +241,7 @@ export default function CompleteSignupPage() {
                                                 <Input placeholder={`${placeholderNickname} (선택)`} {...field} />
                                             </FormControl>
                                             <FormDescription>
-                                                입력하지 않으면 <strong>{placeholderNickname}</strong>(으)로 자동 생성됩니다.
+                                                입력하지 않으면 자동으로 닉네임이 생성됩니다.
                                             </FormDescription>
                                             <FormMessage />
                                         </FormItem>
@@ -267,7 +267,7 @@ export default function CompleteSignupPage() {
                                     name="birthday"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>생년월일</FormLabel>
+                                            <FormLabel>생년월일 <span className="text-muted-foreground font-normal">(선택)</span></FormLabel>
                                             <FormControl>
                                                 <Input type="date" {...field} />
                                             </FormControl>
