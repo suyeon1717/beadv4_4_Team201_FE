@@ -10,9 +10,15 @@ import type { Product } from '@/types/product';
 
 interface PopularProductsSectionProps {
     products: Product[];
+    title?: string;
+    subtitle?: string;
 }
 
-export function PopularProductsSection({ products }: PopularProductsSectionProps) {
+export function PopularProductsSection({ 
+    products,
+    title = '인기 상품',
+    subtitle = 'Popular'
+}: PopularProductsSectionProps) {
     const queryClient = useQueryClient();
     const displayProducts = products.slice(0, 10);
 
@@ -30,8 +36,8 @@ export function PopularProductsSection({ products }: PopularProductsSectionProps
                 {/* Section Header */}
                 <div className="flex items-end justify-between px-8 mb-6">
                     <div>
-                        <p className="text-xs text-muted-foreground uppercase tracking-wider">Popular</p>
-                        <h2 className="text-xl font-semibold tracking-tight mt-1">인기 상품</h2>
+                        <p className="text-xs text-muted-foreground uppercase tracking-wider">{subtitle}</p>
+                        <h2 className="text-xl font-semibold tracking-tight mt-1">{title}</h2>
                     </div>
                     <Link
                         href="/products"

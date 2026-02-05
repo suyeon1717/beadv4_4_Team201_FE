@@ -1,32 +1,81 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query/keys';
-import { getPopularProducts } from '@/lib/api/products';
+import { getPopularProducts, getProducts } from '@/lib/api/products';
+import { getMyParticipatedFundings, getFundings } from '@/lib/api/fundings';
 import type { HomeData } from '@/types/home';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 
 export function useHomeData() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
-  // 1. 인기 상품 조회 (비로그인 상태에서도 가능)
-  const popularProductsQuery = useQuery({
-    queryKey: queryKeys.products.popular(),
-    queryFn: () => getPopularProducts(4),
+  const results = useQueries({
+    queries: [
+      // 1. 인기 상품 조회
+      {
+        queryKey: queryKeys.products.popular(),
+        queryFn: () => getPopularProducts(4),
+      },
+      // 2. 내 참여 펀딩 조회 (로그인 시)
+      {
+        queryKey: queryKeys.myParticipatedFundings,
+        queryFn: () => getMyParticipatedFundings({ size: 5 }),
+        enabled: isAuthenticated,
+      },
+      // 3. 공개 펀딩 목록 (친구 위시리스트/트렌딩 펀딩 대용)
+      {
+        queryKey: queryKeys.fundings,
+        queryFn: () => getFundings({ size: 4, status: 'IN_PROGRESS' }),
+        retry: 1, // Fail fast if auth issues
+      },
+      // 4. 추천 상품 (Non-login only)
+      {
+        queryKey: ['products', 'recommended'],
+        queryFn: () => getProducts({ size: 4 }), // General recommendation
+        enabled: !isAuthenticated,
+      },
+      // 5. 핫한 상품 (Non-login only)
+      {
+        queryKey: ['products', 'hot'],
+        queryFn: () => getProducts({ size: 4, sort: 'price,desc' as any }), // Example strategy
+        enabled: !isAuthenticated,
+      },
+    ],
   });
 
-  // TODO: 로그인 시 펀딩, 위시리스트, 친구 소식 등을 병렬로 조회하여 조합
-  // 현재는 인기 상품만 우선 연동
+  const [
+      popularProductsQuery,
+      myFundingsQuery,
+      publicFundingsQuery,
+      recommendedProductsQuery,
+      hotProductsQuery
+  ] = results;
 
-  const isLoading = popularProductsQuery.isLoading;
+  // Global loading state: Only wait for critical data
+  const isLoading = popularProductsQuery.isLoading || (
+      !isAuthenticated && (recommendedProductsQuery.isLoading || hotProductsQuery.isLoading)
+  );
+  
+  // Global error state: Only error if critical data fails
   const isError = popularProductsQuery.isError;
   const error = popularProductsQuery.error;
-  const refetch = popularProductsQuery.refetch;
+  
+  const refetch = () => results.forEach(q => q.refetch());
 
-  const data: HomeData | undefined = popularProductsQuery.data ? {
-    member: user as any, // 임시 타입 캐스팅
-    myFundings: [], // TODO: useMyParticipatedFundings 연동
-    friendsWishlists: [], // TODO: 친구 위시리스트 연동
-    popularProducts: popularProductsQuery.data.items,
-    walletBalance: 0, // TODO: useWallet 연동
+  // 데이터 매핑 - 에러가 나거나 로딩 중이면 빈 배열 처리
+  const popularProducts = popularProductsQuery.data?.items ?? [];
+  const myFundings = myFundingsQuery.data?.items ?? [];
+  const publicFundings = publicFundingsQuery.data?.items ?? [];
+  const recommendedProducts = recommendedProductsQuery.data?.items ?? [];
+  const hotProducts = hotProductsQuery.data?.items ?? [];
+
+  const data: HomeData | undefined = !isLoading ? {
+    member: user as any,
+    myFundings: myFundings,
+    trendingFundings: publicFundings,
+    popularProducts: popularProducts,
+    recommendedProducts: recommendedProducts,
+    hotProducts: hotProducts,
+    walletBalance: 0, 
   } : undefined;
 
   return {

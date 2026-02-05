@@ -6,7 +6,7 @@ import { AppShell } from '@/components/layout/AppShell';
 import { Footer } from '@/components/layout/Footer';
 import { WelcomeSection } from '@/features/home/components/WelcomeSection';
 import { MyFundingsSection } from '@/features/home/components/MyFundingsSection';
-import { FriendsWishlistSection } from '@/features/home/components/FriendsWishlistSection';
+import { TrendingFundingsSection } from '@/features/home/components/TrendingFundingsSection';
 import { PopularProductsSection } from '@/features/home/components/PopularProductsSection';
 import { HomePageSkeleton } from '@/features/home/components/HomePageSkeleton';
 import { Separator } from '@/components/ui/separator';
@@ -64,6 +64,8 @@ export function HomePageClient() {
         return null;
     }
 
+    const isGuest = !data.member;
+
     return (
         <AppShell
             headerVariant="main"
@@ -77,12 +79,36 @@ export function HomePageClient() {
                 <Separator className="h-2 bg-secondary/30" />
 
                 {/* My Active Fundings */}
-                <MyFundingsSection fundings={data.myFundings} />
+                {/* Content switching based on Auth status */}
+                {isGuest ? (
+                    <>
+                        {/* Guest: MD's Pick (Recommended) */}
+                        <PopularProductsSection 
+                            products={data.recommendedProducts || []} 
+                            title="MD's Pick" 
+                            subtitle="Recommendation" 
+                        />
+                        
+                        <Separator className="h-2 bg-secondary/30" />
 
-                <Separator className="h-2 bg-secondary/30" />
+                        {/* Guest: Hot Products (Trending) */}
+                        <PopularProductsSection 
+                            products={data.hotProducts || []} 
+                            title="인기 급상승" 
+                            subtitle="Trending" 
+                        />
+                    </>
+                ) : (
+                    <>
+                        {/* Member: My Active Fundings */}
+                        <MyFundingsSection fundings={data.myFundings} />
 
-                {/* Friends' Wishlists */}
-                <FriendsWishlistSection friendsWishlists={data.friendsWishlists} />
+                        <Separator className="h-2 bg-secondary/30" />
+
+                        {/* Member: Trending Fundings */}
+                        <TrendingFundingsSection fundings={data.trendingFundings} />
+                    </>
+                )}
 
                 <Separator className="h-2 bg-secondary/30" />
 

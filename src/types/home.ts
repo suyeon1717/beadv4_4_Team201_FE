@@ -10,7 +10,9 @@ import { Product } from './product';
 export interface HomeData {
     member: Member;
     myFundings: Funding[];
-    friendsWishlists: FriendWishlistItem[];
+    trendingFundings: Funding[];
     popularProducts: Product[];
+    recommendedProducts?: Product[];
+    hotProducts?: Product[];
     walletBalance: number;
 }
