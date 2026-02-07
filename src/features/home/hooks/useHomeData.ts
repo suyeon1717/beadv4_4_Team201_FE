@@ -36,7 +36,7 @@ export function useHomeData() {
       // 5. 핫한 상품 (Non-login only)
       {
         queryKey: ['products', 'hot'],
-        queryFn: () => getProducts({ size: 4, sort: 'price,desc' as any }), // Example strategy
+        queryFn: () => getProducts({ size: 4, sort: 'price_desc' }),
         enabled: !isAuthenticated,
       },
     ],
@@ -69,7 +69,7 @@ export function useHomeData() {
   const hotProducts = hotProductsQuery.data?.items ?? [];
 
   const data: HomeData | undefined = !isLoading ? {
-    member: user as any,
+    member: null,
     myFundings: myFundings,
     trendingFundings: publicFundings,
     popularProducts: popularProducts,

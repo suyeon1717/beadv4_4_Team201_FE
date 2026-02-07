@@ -21,13 +21,6 @@ export async function updateMe(data: MemberUpdateRequest): Promise<Member> {
   return apiClient.patch<Member>('/api/v2/members/me', data);
 }
 
-/**
- * @deprecated Use updateMe instead for updating own profile
- */
-export async function updateMember(memberId: string, data: MemberUpdateRequest): Promise<Member> {
-  return apiClient.patch<Member>(`/api/v2/members/${memberId}`, data);
-}
-
 export async function deleteMe(): Promise<void> {
   return apiClient.delete<void>('/api/v2/members/me');
 }

@@ -5,6 +5,8 @@ import { useAddWishlistItem, useRemoveWishlistItem } from './useWishlistMutation
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { toast } from 'sonner';
 
+import type { Wishlist, WishItem } from '@/types/wishlist';
+
 /**
  * Hook to manage wishlist state for a specific product
  */
@@ -15,11 +17,11 @@ export function useWishlistItem(productId: string) {
   const removeMutation = useRemoveWishlistItem();
 
   // Read wishlist from cache without triggering a fetch
-  const wishlist = queryClient.getQueryData(queryKeys.myWishlist) as any;
+  const wishlist = queryClient.getQueryData<Wishlist>(queryKeys.myWishlist);
 
   // Check if product is in wishlist
-  const wishlistItem = (wishlist as any)?.items?.find(
-    (item: any) => item.product?.id === productId || item.productId === productId
+  const wishlistItem = wishlist?.items?.find(
+    (item: WishItem) => item.product?.id === productId || item.productId === productId
   );
   const isInWishlist = !!wishlistItem;
 

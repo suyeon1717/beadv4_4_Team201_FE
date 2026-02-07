@@ -3,7 +3,7 @@ import { apiClient } from './client';
 // Types
 export interface CreateChargePaymentRequest {
   amount: number;
-  orderId: string;
+  orderId?: string;
 }
 
 export interface CreateChargePaymentResponse {

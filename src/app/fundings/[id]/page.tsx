@@ -162,7 +162,7 @@ export default function FundingDetailPage() {
                     open={participateModalOpen}
                     onOpenChange={setParticipateModalOpen}
                     funding={funding}
-                    onSuccess={() => console.log('Participation Success')}
+                    onSuccess={() => {}}
                 />
 
                 {/* Participants Modal */}

@@ -8,7 +8,7 @@ import { Product } from './product';
  * Contains all necessary information for the home screen
  */
 export interface HomeData {
-    member: Member;
+    member: Member | null;
     myFundings: Funding[];
     trendingFundings: Funding[];
     popularProducts: Product[];

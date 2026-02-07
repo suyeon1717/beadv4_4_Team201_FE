@@ -167,7 +167,6 @@ export default function CompleteSignupPage() {
             // 409 Conflict means member already exists (created by UserAuthenticatedEvent)
             // Treat this as success and redirect to home
             if (error?.status === 409 || error?.message?.includes('409')) {
-                console.log('Member already exists, redirecting to home');
                 queryClient.invalidateQueries({ queryKey: queryKeys.me });
                 queryClient.invalidateQueries({ queryKey: queryKeys.home });
                 toast.success('프로필 설정이 완료되었습니다!');

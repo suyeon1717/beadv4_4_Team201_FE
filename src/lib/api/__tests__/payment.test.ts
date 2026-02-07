@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 
@@ -27,7 +28,6 @@ describe('Payment API', () => {
       paymentId: 123,
       orderId: 'CHG-test-order-id',
       amount: 10000,
-      idempotencyKey: 'test-idempotency-key',
       status: 'PENDING',
     };
 

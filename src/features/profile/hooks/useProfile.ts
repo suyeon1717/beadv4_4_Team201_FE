@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query/keys';
-import { getMe, updateMember } from '@/lib/api/members';
+import { getMe, updateMe } from '@/lib/api/members';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import type { MemberUpdateRequest } from '@/types/member';
 import { toast } from 'sonner';
@@ -28,19 +28,15 @@ export function useProfile() {
  */
 export function useUpdateProfile() {
   const { user } = useAuth();
-  const memberId = user?.sub;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: MemberUpdateRequest) => {
-      if (!memberId) throw new Error('Not authenticated');
-      return updateMember(memberId, data);
+      if (!user) throw new Error('Not authenticated');
+      return updateMe(data);
     },
     onSuccess: () => {
-      if (memberId) {
-        queryClient.invalidateQueries({ queryKey: queryKeys.member(memberId) });
-        queryClient.invalidateQueries({ queryKey: queryKeys.me });
-      }
+      queryClient.invalidateQueries({ queryKey: queryKeys.me });
       toast.success('프로필이 성공적으로 업데이트되었습니다');
     },
     onError: (error: Error) => {

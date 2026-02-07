@@ -39,8 +39,7 @@ import WalletPage from '@/app/wallet/page';
 import { useWallet, useWalletHistory } from '@/features/wallet/hooks/useWallet';
 
 const mockWallet: Wallet = {
-    id: 'w1',
-    memberId: 'user-1',
+    walletId: 1,
     balance: 15000,
 };
 
