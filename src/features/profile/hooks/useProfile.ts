@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query/keys';
-import { updateMember } from '@/lib/api/members';
-import { getMe } from '@/lib/api/auth';
+import { getMe, updateMember } from '@/lib/api/members';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import type { MemberUpdateRequest } from '@/types/member';
 import { toast } from 'sonner';

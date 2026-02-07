@@ -5,8 +5,7 @@ import {
   refuseFunding,
   type RefuseFundingRequest,
 } from '@/lib/api/fundings';
-import { getCart, addCartItem } from '@/lib/api/cart';
-import type { Cart } from '@/types/cart';
+import { addCartItem } from '@/lib/api/cart';
 
 /**
  * Hook to create a new funding (add FUNDING_PENDING to cart)
@@ -29,14 +28,8 @@ export function useCreateFunding() {
       expiresInDays?: number;
       message?: string;
     }) => {
-      // 1. 캐시에서 cart 조회 또는 API 호출
-      let cart = queryClient.getQueryData<Cart>(queryKeys.cart);
-      if (!cart) {
-        cart = await getCart();
-      }
-
-      // 2. 장바구니에 FUNDING_PENDING 타입으로 추가
-      await addCartItem(cart.id, {
+      // 장바구니에 FUNDING_PENDING 타입으로 추가
+      await addCartItem({
         wishItemId,
         amount,
       });
@@ -63,14 +56,8 @@ export function useParticipateFunding() {
 
   return useMutation({
     mutationFn: async ({ fundingId, amount }: { fundingId: string; amount: number }) => {
-      // 1. 캐시에서 cart 조회 또는 API 호출
-      let cart = queryClient.getQueryData<Cart>(queryKeys.cart);
-      if (!cart) {
-        cart = await getCart();
-      }
-
-      // 2. 장바구니에 FUNDING 타입으로 추가
-      await addCartItem(cart.id, {
+      // 장바구니에 FUNDING 타입으로 추가
+      await addCartItem({
         fundingId,
         amount,
       });

@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import { sync, getMe } from '@/lib/api/auth';
+import { sync } from '@/lib/api/auth';
 
 const SYNC_SESSION_KEY = 'auth_synced';
 

@@ -7,5 +7,4 @@ export * from './cart';
 export * from './orders';
 export * from './payments';
 export * from './wallet';
-export * from './home';
 export { apiClient, ApiError } from './client';

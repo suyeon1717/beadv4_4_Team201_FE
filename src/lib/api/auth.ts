@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { Member, LoginResponse } from '@/types/member';
+import type { LoginResponse } from '@/types/member';
 
 export interface LoginRequest {
   idToken: string;
@@ -9,9 +9,7 @@ export async function login(data: LoginRequest): Promise<LoginResponse> {
   return apiClient.post<LoginResponse>('/api/v2/auth/login', data);
 }
 
-export async function getMe(): Promise<Member> {
-  return apiClient.get<Member>('/api/v2/members/me');
-}
+// getMe is exported from ./members module
 
 /**
  * Synchronize Auth0 session with Backend

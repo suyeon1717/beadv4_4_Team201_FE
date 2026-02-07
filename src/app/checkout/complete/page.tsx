@@ -87,20 +87,20 @@ function CheckoutCompleteContent() {
                         <CardContent className="p-4 space-y-3">
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">주문 번호</span>
-                                <span className="font-mono text-xs">{order.id}</span>
+                                <span className="font-mono text-xs">{order.order.orderNumber}</span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">주문 일시</span>
-                                <span>{new Date(order.createdAt).toLocaleString('ko-KR')}</span>
+                                <span>{new Date(order.order.createdAt).toLocaleString('ko-KR')}</span>
                             </div>
                             <div className="flex justify-between text-sm">
                                 <span className="text-muted-foreground">펀딩 참여</span>
-                                <span>{order.itemCount}건</span>
+                                <span>{order.items.length}건</span>
                             </div>
                             <Separator />
                             <div className="flex justify-between font-bold text-lg">
                                 <span>결제 금액</span>
-                                <span className="text-primary">{order.totalAmount.toLocaleString()}원</span>
+                                <span className="text-primary">{order.order.totalAmount.toLocaleString()}원</span>
                             </div>
                         </CardContent>
                     </Card>
@@ -110,10 +110,12 @@ function CheckoutCompleteContent() {
                     <h3 className="text-lg font-bold">펀딩 목록</h3>
                     <Card className="border-border bg-card">
                         <CardContent className="p-4 space-y-2">
-                            {order.items.map((item) => (
+                            {order.items.map((item, index) => (
                                 <div key={item.id} className="flex justify-between text-sm">
-                                    <span className="line-clamp-1">{item.funding.product.name}</span>
-                                    <span className="ml-2 flex-shrink-0">{item.amount.toLocaleString()}원</span>
+                                    <span className="text-muted-foreground">
+                                        {item.orderItemType === 'FUNDING' ? '펀딩 참여' : '펀딩 개설'} #{index + 1}
+                                    </span>
+                                    <span className="ml-2 flex-shrink-0 font-medium">{item.amount.toLocaleString()}원</span>
                                 </div>
                             ))}
                         </CardContent>
