@@ -180,13 +180,7 @@ export default function DiscoverPage() {
                             {trendFundings.map((funding) => (
                                 <FundingCard
                                     key={funding.id}
-                                    funding={{
-                                        ...funding,
-                                        recipient: {
-                                            nickname: funding.recipient?.nickname || null,
-                                            avatarUrl: funding.recipient?.avatarUrl || null
-                                        }
-                                    }}
+                                    funding={funding}
                                     onClick={() => router.push(`/fundings/${funding.id}`)}
                                     variant="carousel"
                                     className="w-full"

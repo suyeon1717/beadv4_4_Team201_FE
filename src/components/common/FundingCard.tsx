@@ -5,8 +5,9 @@ import { differenceInDays, parseISO } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { FundingProgress } from './FundingProgress';
 import { cn } from '@/lib/utils';
+import type { FundingStatus } from '@/types/funding';
 
-export type FundingStatus = 'PENDING' | 'IN_PROGRESS' | 'ACHIEVED' | 'ACCEPTED' | 'REFUSED' | 'EXPIRED' | 'CLOSED';
+export type { FundingStatus };
 
 export interface FundingCardProps {
     variant?: 'carousel' | 'list';

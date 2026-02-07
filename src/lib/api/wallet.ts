@@ -1,4 +1,6 @@
 import { apiClient } from './client';
+import { mapSpringPage } from './pagination';
+import type { SpringPage } from './pagination';
 import type {
   Wallet,
   WalletTransaction,
@@ -12,44 +14,6 @@ import type {
 // Alias for backward compatibility
 export type WalletTransactionType = TransactionType;
 export type WalletHistoryParams = WalletHistoryQueryParams;
-
-// --- Backend Response Types ---
-
-/**
- * Spring Data Page<T> 원시 응답 구조
- * 백엔드가 Page 객체를 직렬화한 형태 그대로
- */
-interface SpringPage<T> {
-  content: T[];
-  pageable: {
-    pageNumber: number;
-    pageSize: number;
-  };
-  totalElements: number;
-  totalPages: number;
-  size: number;
-  number: number;
-  first: boolean;
-  last: boolean;
-  empty: boolean;
-}
-
-// --- Mapping Functions ---
-
-function mapSpringPage(page: SpringPage<WalletTransaction>): WalletHistoryResponse {
-  return {
-    content: page.content,
-    items: page.content,
-    page: {
-      page: page.number,
-      size: page.size,
-      totalElements: page.totalElements,
-      totalPages: page.totalPages,
-      hasNext: !page.last,
-      hasPrevious: !page.first,
-    },
-  };
-}
 
 // --- API Functions ---
 

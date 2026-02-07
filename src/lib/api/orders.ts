@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import { mapCustomPage } from './pagination';
 import type { PageParams } from '@/types/api';
 import type {
   Order,
@@ -161,31 +162,14 @@ export async function getOrders(params?: PageParams): Promise<OrderListResponse>
   const endpoint = queryString ? `/api/v2/orders?${queryString}` : '/api/v2/orders';
 
   const response = await apiClient.get<BackendGetOrdersResponse>(endpoint);
+  const orders = response.orders.map(mapBackendOrder);
 
-  return {
-    content: response.orders.map(mapBackendOrder),
-    items: response.orders.map(mapBackendOrder),
-    page: {
-      page: response.page,
-      size: response.size,
-      totalElements: response.totalElements,
-      totalPages: response.totalPages,
-      hasNext: response.hasNext,
-      hasPrevious: response.hasPrevious,
-    },
-  };
-}
-
-// --- Legacy functions for backward compatibility ---
-
-/**
- * @deprecated Use placeOrder instead
- */
-export async function createOrder(
-  data?: { cartItemIds?: string[] },
-  idempotencyKey?: string
-): Promise<{ id: string }> {
-  throw new Error(
-    'createOrder is deprecated. Use placeOrder with items[] and method instead.'
-  );
+  return mapCustomPage(orders, {
+    page: response.page,
+    size: response.size,
+    totalElements: response.totalElements,
+    totalPages: response.totalPages,
+    hasNext: response.hasNext,
+    hasPrevious: response.hasPrevious,
+  });
 }

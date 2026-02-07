@@ -19,17 +19,13 @@ export function UserHomeContent({ userId }: { userId: string }) {
 
     const user = useMemo(() => {
         if (!profile) return null;
-        // 백엔드에서 아직 제공하지 않는 필드들은 기본값 사용
-        const profileAny = profile as any;
         return {
             id: profile.id.toString(),
             nickname: profile.nickname || 'Unknown',
-            description: profileAny.description || "안녕하세요. 취향을 공유하는 펀딩을 만듭니다.",
-            // Auth0 picture를 우선 사용, 없으면 profile.avatarUrl, 그것도 없으면 기본 아바타
+            description: "안녕하세요. 취향을 공유하는 펀딩을 만듭니다.",
             avatarUrl: auth0User?.picture || profile.avatarUrl || '/images/default-avatar.png',
-            // 커버 이미지는 아직 백엔드에서 제공하지 않으므로 기본값 사용
-            coverImageUrl: profileAny.coverImageUrl || 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=80',
-            followerCount: profileAny.followerCount || 0,
+            coverImageUrl: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=80',
+            followerCount: 0,
             isFollowing: false,
         };
     }, [profile, auth0User]);
@@ -96,7 +92,7 @@ export function UserHomeContent({ userId }: { userId: string }) {
                         {ongoingFundings.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                                 {ongoingFundings.map(funding => (
-                                    <FundingCard key={funding.id} funding={funding as any} />
+                                    <FundingCard key={funding.id} funding={funding} />
                                 ))}
                             </div>
                         ) : (
@@ -110,7 +106,7 @@ export function UserHomeContent({ userId }: { userId: string }) {
                         {endedFundings.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                                 {endedFundings.map(funding => (
-                                    <FundingCard key={funding.id} funding={funding as any} />
+                                    <FundingCard key={funding.id} funding={funding} />
                                 ))}
                             </div>
                         ) : (
@@ -151,14 +147,9 @@ function UserHomeContentWithRedirect({ userId }: { userId: string }) {
 
 function RedirectToProfile() {
     const router = useRouter();
-    
-    // Using useEffect for side effects
+
     useEffect(() => {
-        if (typeof window !== 'undefined') {
-           // We use a timeout to ensure render phase is complete if needed, but usually useEffect is fine.
-           // However, to force it out of render loop immediately:
-           setTimeout(() => router.replace('/profile'), 0);
-        }
+        router.replace('/profile');
     }, [router]);
 
     return (
