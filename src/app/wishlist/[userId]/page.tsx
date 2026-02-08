@@ -10,7 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { usePublicWishlist } from '@/features/wishlist/hooks/useWishlist';
-import { Gift, Users, Sparkles, PartyPopper } from 'lucide-react';
+import { useCreateFunding } from '@/features/funding/hooks/useFundingMutations';
+import { Gift, Users, Sparkles, PartyPopper, Loader2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils/format';
 import {
     Dialog,
@@ -36,6 +37,7 @@ export default function FriendWishlistPage({ params }: FriendWishlistPageProps) 
     const { data: wishlist, isLoading, error } = usePublicWishlist(userId);
     const [selectedItem, setSelectedItem] = useState<PublicWishlistItem | null>(null);
     const [isStartFundingOpen, setIsStartFundingOpen] = useState(false);
+    const createFunding = useCreateFunding();
 
     const handleStartFundingClick = (item: PublicWishlistItem) => {
         setSelectedItem(item);
@@ -45,13 +47,19 @@ export default function FriendWishlistPage({ params }: FriendWishlistPageProps) 
     const handleConfirmStartFunding = async () => {
         if (!selectedItem) return;
 
-        try {
-            toast.success('펀딩이 개설되었습니다!');
-            setIsStartFundingOpen(false);
-            router.push('/fundings/organized');
-        } catch {
-            toast.error('펀딩 개설에 실패했습니다');
-        }
+        createFunding.mutate(
+            { wishItemId: selectedItem.wishlistItemId, amount: selectedItem.price },
+            {
+                onSuccess: () => {
+                    toast.success('장바구니에 펀딩이 추가되었습니다. 결제를 진행해주세요!');
+                    setIsStartFundingOpen(false);
+                    router.push('/cart');
+                },
+                onError: () => {
+                    toast.error('펀딩 추가에 실패했습니다');
+                },
+            },
+        );
     };
 
     if (isLoading) {
@@ -174,12 +182,16 @@ export default function FriendWishlistPage({ params }: FriendWishlistPageProps) 
                         </div>
                     )}
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsStartFundingOpen(false)}>
+                        <Button variant="outline" onClick={() => setIsStartFundingOpen(false)} disabled={createFunding.isPending}>
                             취소
                         </Button>
-                        <Button onClick={handleConfirmStartFunding}>
-                            <Gift className="w-4 h-4 mr-2" />
-                            펀딩 개설하기
+                        <Button onClick={handleConfirmStartFunding} disabled={createFunding.isPending}>
+                            {createFunding.isPending ? (
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            ) : (
+                                <Gift className="w-4 h-4 mr-2" />
+                            )}
+                            {createFunding.isPending ? '처리 중...' : '펀딩 개설하기'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>
