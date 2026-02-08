@@ -4,7 +4,9 @@ import type {
   WishItem,
   WishlistVisibility,
   WishItemCreateRequest,
-  FriendWishlistListResponse
+  FriendWishlistListResponse,
+  PublicWishlistSummary,
+  PublicWishlist,
 } from '@/types/wishlist';
 
 export interface WishlistVisibilityUpdateRequest {
@@ -109,4 +111,60 @@ export async function getFriendsWishlists(limit?: number): Promise<FriendWishlis
   const endpoint = queryString ? `/api/v2/friends/wishlists?${queryString}` : '/api/v2/friends/wishlists';
 
   return apiClient.get<FriendWishlistListResponse>(endpoint);
+}
+
+interface BackendMemberWishlistSummary {
+  memberId: number;
+  nickname: string;
+}
+
+interface BackendPublicWishlistItem {
+  wishlistItemId: number;
+  productId: number;
+  productName: string;
+  price: number;
+  addedAt: string;
+}
+
+interface BackendPublicWishlistResponse {
+  memberId: number;
+  nickname: string;
+  items: BackendPublicWishlistItem[];
+}
+
+export async function searchPublicWishlists(nickname?: string): Promise<PublicWishlistSummary[]> {
+  const queryParams = new URLSearchParams();
+  if (nickname) queryParams.append('nickname', nickname);
+
+  const queryString = queryParams.toString();
+  const endpoint = queryString
+    ? `/api/v2/wishlists/search?${queryString}`
+    : '/api/v2/wishlists/search';
+
+  const response = await apiClient.get<BackendMemberWishlistSummary[]>(endpoint);
+
+  return response.map((item) => ({
+    memberId: item.memberId.toString(),
+    nickname: item.nickname,
+  }));
+}
+
+export async function getPublicWishlist(memberId: string): Promise<PublicWishlist | null> {
+  const response = await apiClient.get<BackendPublicWishlistResponse | null>(
+    `/api/v2/wishlists/${memberId}`
+  );
+
+  if (!response) return null;
+
+  return {
+    memberId: response.memberId.toString(),
+    nickname: response.nickname,
+    items: response.items.map((item) => ({
+      wishlistItemId: item.wishlistItemId.toString(),
+      productId: item.productId.toString(),
+      productName: item.productName,
+      price: item.price,
+      addedAt: item.addedAt,
+    })),
+  };
 }

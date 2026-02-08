@@ -32,6 +32,9 @@ export type {
     WishItemCreateRequest,
     FriendWishlistItem,
     FriendWishlistListResponse,
+    PublicWishlistSummary,
+    PublicWishlistItem,
+    PublicWishlist,
 } from './wishlist';
 
 // Product types
@@ -81,8 +84,6 @@ export type {
     PaymentStatus,
     PaymentType,
     PaymentMethod,
-    PaymentCreateRequest,
-    PaymentResult,
     FundingResult,
 } from './payment';
 

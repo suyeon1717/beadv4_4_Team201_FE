@@ -26,6 +26,8 @@ export const queryKeys = {
   // Wishlist
   myWishlist: ['wishlists', 'me'] as const,
   wishlist: (memberId: string) => ['wishlists', memberId] as const,
+  publicWishlistSearch: (nickname?: string) => ['wishlists', 'search', nickname] as const,
+  publicWishlist: (memberId: string) => ['wishlists', 'public', memberId] as const,
 
   // Products
   products: Object.assign(

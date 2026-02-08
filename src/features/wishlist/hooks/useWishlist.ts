@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query/keys';
-import { getMyWishlist, getWishlist } from '@/lib/api/wishlists';
+import { getMyWishlist, getWishlist, searchPublicWishlists, getPublicWishlist } from '@/lib/api/wishlists';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
 
@@ -24,6 +24,21 @@ export function useWishlist(memberId: string) {
   return useQuery({
     queryKey: queryKeys.wishlist(memberId),
     queryFn: () => getWishlist(memberId),
+    enabled: !!memberId,
+  });
+}
+
+export function usePublicWishlistSearch(nickname?: string) {
+  return useQuery({
+    queryKey: queryKeys.publicWishlistSearch(nickname),
+    queryFn: () => searchPublicWishlists(nickname),
+  });
+}
+
+export function usePublicWishlist(memberId: string) {
+  return useQuery({
+    queryKey: queryKeys.publicWishlist(memberId),
+    queryFn: () => getPublicWishlist(memberId),
     enabled: !!memberId,
   });
 }

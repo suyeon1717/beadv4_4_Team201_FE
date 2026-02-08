@@ -282,13 +282,44 @@ export const handlers = [
     return HttpResponse.json(myWishlist);
   }),
 
+  http.get('**/api/v2/wishlists/search', ({ request }) => {
+    const url = new URL(request.url);
+    const nickname = url.searchParams.get('nickname');
+
+    const publicWishlists = wishlists.filter((w) => w.visibility === 'PUBLIC');
+    const summaries = publicWishlists.map((w) => ({
+      memberId: parseInt(w.memberId.replace('member-', '').replace('dev', '0'), 10),
+      nickname: w.member.nickname || 'Unknown',
+    }));
+
+    const filtered = nickname
+      ? summaries.filter((m) => m.nickname.includes(nickname))
+      : summaries;
+
+    return HttpResponse.json({ result: 'SUCCESS', data: filtered });
+  }),
+
   http.get('**/api/v2/wishlists/:memberId', ({ params }) => {
     const { memberId } = params;
     const wishlist = wishlists.find((w) => w.memberId === memberId);
     if (!wishlist) {
-      return new HttpResponse(null, { status: 404 });
+      return HttpResponse.json({ result: 'SUCCESS', data: null });
     }
-    return HttpResponse.json(wishlist);
+    if (wishlist.visibility !== 'PUBLIC') {
+      return HttpResponse.json({ result: 'SUCCESS', data: null });
+    }
+    const publicResponse = {
+      memberId: parseInt(wishlist.memberId.replace('member-', '').replace('dev', '0'), 10),
+      nickname: wishlist.member.nickname || 'Unknown',
+      items: wishlist.items.map((item) => ({
+        wishlistItemId: parseInt(item.id.replace('wish-item-', ''), 10),
+        productId: parseInt(item.productId.replace('product-', ''), 10),
+        productName: item.product.name,
+        price: item.product.price,
+        addedAt: item.createdAt,
+      })),
+    };
+    return HttpResponse.json({ result: 'SUCCESS', data: publicResponse });
   }),
 
   http.patch('**/api/v2/wishlists/visibility', async ({ request }) => {

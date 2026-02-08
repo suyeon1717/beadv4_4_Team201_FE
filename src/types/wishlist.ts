@@ -64,3 +64,22 @@ export interface FriendWishlistItem {
 export interface FriendWishlistListResponse {
     items: FriendWishlistItem[];
 }
+
+export interface PublicWishlistSummary {
+    memberId: string;
+    nickname: string;
+}
+
+export interface PublicWishlistItem {
+    wishlistItemId: string;
+    productId: string;
+    productName: string;
+    price: number;
+    addedAt: string;
+}
+
+export interface PublicWishlist {
+    memberId: string;
+    nickname: string;
+    items: PublicWishlistItem[];
+}
