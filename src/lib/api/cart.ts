@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import { resolveImageUrl } from '@/lib/image';
 import type {
   Cart,
   CartItem,
@@ -70,7 +71,7 @@ function mapBackendCartItem(item: BackendCartItemResponse, cartId: number): Cart
         id: '',
         name: item.productName,
         price: item.productPrice,
-        imageUrl: '/images/placeholder-product.svg',
+        imageUrl: resolveImageUrl(undefined),
         status: 'ON_SALE',
         brandName: '',
       },
