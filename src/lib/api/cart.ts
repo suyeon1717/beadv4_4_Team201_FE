@@ -61,7 +61,7 @@ function mapBackendCartItem(item: BackendCartItemResponse, cartId: number): Cart
   const isNewFunding = item.targetType === 'FUNDING_PENDING';
 
   return {
-    id: `${cartId}-${item.targetType}-${item.targetId}`, // 복합 키 생성
+    id: `${cartId}::${item.targetType}::${item.targetId}`, // 복합 키 생성
     cartId: cartId.toString(),
     fundingId: item.targetType === 'FUNDING' ? item.targetId.toString() : '',
     funding: {
@@ -96,9 +96,9 @@ function mapBackendCartItem(item: BackendCartItemResponse, cartId: number): Cart
 // --- Helpers ---
 
 export function parseCartItemId(itemId: string): { targetType: BackendTargetType; targetId: number } {
-  const parts = itemId.split('-');
-  const targetId = parseInt(parts[parts.length - 1], 10);
-  const targetType = parts.slice(1, -1).join('-') as BackendTargetType;
+  const parts = itemId.split('::');
+  const targetId = parseInt(parts[2], 10);
+  const targetType = parts[1] as BackendTargetType;
   return { targetType, targetId };
 }
 
