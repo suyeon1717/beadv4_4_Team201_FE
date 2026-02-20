@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { handleImageError } from '@/lib/image';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2 } from 'lucide-react';
@@ -49,6 +50,7 @@ export function CartItem({ item, onUpdateAmount, onToggleSelect, onRemove }: Car
                     alt={funding.product.name}
                     fill
                     className="object-cover"
+                    onError={handleImageError}
                 />
             </div>
 
