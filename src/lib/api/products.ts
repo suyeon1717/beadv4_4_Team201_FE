@@ -6,7 +6,13 @@ import type {
   ProductListResponse,
   ProductQueryParams,
   ProductSearchParams,
-  PopularProductsResponse
+  PopularProductsResponse,
+  ProductCreateRequest,
+  ProductUpdateRequest,
+  MyProduct,
+  MyProductPage,
+  StockHistoryPage,
+  StockHistorySearchParams,
 } from '@/types/product';
 
 // Alias for backward compatibility
@@ -106,7 +112,7 @@ export async function searchProducts(params: SearchProductsParams): Promise<Prod
 export async function getProduct(productId: string): Promise<ProductDetail> {
   // 백엔드 엔드포인트: /api/v2/products/{id}
   const product = await apiClient.get<BackendProduct>(`/api/v2/products/${productId}`);
-  
+
   return {
     id: product.id.toString(),
     name: product.name,
@@ -141,4 +147,75 @@ export async function getPopularProducts(limit?: number): Promise<PopularProduct
   return {
     items: response.content.map(mapBackendProduct),
   };
+}
+
+/**
+ * 판매자 본인 등록 상품 목록 조회 (GET /api/v2/products/my)
+ * MyProductSearchDto: keyword, minPrice, maxPrice, inStock, status, sort, page, size
+ */
+export interface SellerProductSearchParams {
+  keyword?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  inStock?: boolean;
+  status?: 'DRAFT' | 'REJECTED' | 'ACTIVE' | 'INACTIVE';
+  sort?: string;
+  page?: number;
+  size?: number;
+}
+
+export async function getSellerProducts(params?: SellerProductSearchParams): Promise<MyProductPage> {
+  const queryParams = new URLSearchParams();
+  if (params?.keyword) queryParams.append('keyword', params.keyword);
+  if (params?.minPrice !== undefined) queryParams.append('minPrice', params.minPrice.toString());
+  if (params?.maxPrice !== undefined) queryParams.append('maxPrice', params.maxPrice.toString());
+  if (params?.inStock !== undefined) queryParams.append('inStock', params.inStock.toString());
+  if (params?.status) queryParams.append('status', params.status);
+  if (params?.sort) queryParams.append('sort', params.sort);
+  if (params?.page !== undefined) queryParams.append('page', params.page.toString());
+  if (params?.size !== undefined) queryParams.append('size', params.size.toString());
+
+  const queryString = queryParams.toString();
+  const endpoint = queryString ? `/api/v2/products/my?${queryString}` : '/api/v2/products/my';
+  return apiClient.get<MyProductPage>(endpoint);
+}
+
+/**
+ * 상품 등록 (POST /api/v2/products)
+ */
+export async function createProduct(data: ProductCreateRequest): Promise<MyProduct> {
+  return apiClient.post<MyProduct>('/api/v2/products', data);
+}
+
+/**
+ * 내 상품 상세 조회 (GET /api/v2/products/my/{productId})
+ */
+export async function getMyProduct(productId: string | number): Promise<MyProduct> {
+  return apiClient.get<MyProduct>(`/api/v2/products/my/${productId}`);
+}
+
+/**
+ * 상품 수정 (PATCH /api/v2/products/my/{productId})
+ */
+export async function updateProduct(productId: string | number, data: ProductUpdateRequest): Promise<MyProduct> {
+  return apiClient.patch<MyProduct>(`/api/v2/products/my/${productId}`, data);
+}
+
+/**
+ * 재고 이력 조회 (GET /api/v2/products/my/stock-histories)
+ */
+export async function getStockHistory(params?: StockHistorySearchParams): Promise<StockHistoryPage> {
+  const queryParams = new URLSearchParams();
+  if (params?.productId !== undefined) queryParams.append('productId', params.productId.toString());
+  if (params?.changeType) queryParams.append('changeType', params.changeType);
+  if (params?.fromDate) queryParams.append('fromDate', params.fromDate);
+  if (params?.toDate) queryParams.append('toDate', params.toDate);
+  if (params?.page !== undefined) queryParams.append('page', params.page.toString());
+  if (params?.size !== undefined) queryParams.append('size', params.size.toString());
+
+  const queryString = queryParams.toString();
+  const endpoint = queryString
+    ? `/api/v2/products/my/stock-histories?${queryString}`
+    : '/api/v2/products/my/stock-histories';
+  return apiClient.get<StockHistoryPage>(endpoint);
 }
