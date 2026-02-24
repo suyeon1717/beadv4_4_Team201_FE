@@ -138,7 +138,7 @@ export interface ProductUpdateRequest {
 export interface StockHistory {
     id: number;
     productId: number;
-    changeType: 'MANUAL_ADJUST' | 'ORDER_DEDUCT' | 'ORDER_RESTORE';
+    changeType: 'MANUAL_SYSTEM' | 'MANUAL_SELLER' | 'ORDER_COMPLETED' | 'ORDER_REFUNDED';
     delta: number;
     beforeStock: number;
     afterStock: number;
@@ -150,9 +150,10 @@ export interface StockHistory {
  */
 export interface StockHistorySearchParams {
     productId?: number;
-    changeType?: 'MANUAL_ADJUST' | 'ORDER_DEDUCT' | 'ORDER_RESTORE';
+    changeType?: 'MANUAL_SYSTEM' | 'MANUAL_SELLER' | 'ORDER_COMPLETED' | 'ORDER_REFUNDED';
     fromDate?: string;
     toDate?: string;
+    sort?: string;
     page?: number;
     size?: number;
 }
